@@ -4,7 +4,9 @@ author: "Yuhan Wu"
 date: "6/9/2021"
 output: html_document
 ---
-```{r}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 ```
 
@@ -21,21 +23,28 @@ raw_data <- read_csv("https://raw.githubusercontent.com/Financial-Times/police-m
  clean_data <- raw_data %>% 
   group_by(officer_id) %>% 
   summarise(total = n()) %>% 
+  mutate(compl_desc= ntile(total,10))%>%
+  group_by(compl_desc)%>%
   arrange(desc(total)) %>% 
-  mutate(officer_id = as.character(officer_id)) %>% 
-  slice(1:10)
+  mutate(officer_id = as.character(officer_id)) 
 ```
+
 
 ```{r, plot_data}
 clean_data %>% 
   ggplot(aes(x = officer_id, y = total)) +
     geom_col() +
-    coord_flip() +
     labs(title = "Complaints about Police Officers in Philadelphia",
          subtitle = "Most complained about officers have many more complaints than\nthe typical officer",
          x = "Officer",
          y = "Complaints",
-         caption = "Data from Financial Times") 
+         caption = "Data from Financial Times") +
+        ntile(data)
+         
+```
+
+```{r}
+
 ```
 
 
